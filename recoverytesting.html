@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank ABC - Quantitative Stress Testing for Recovery Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+            font-size: 2rem;
+            color: #0d9488;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <header class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-3xl font-bold text-teal-700">Quantitative Stress Testing</h1>
+            <p class="mt-1 text-lg text-slate-600">Assessing the Resilience of Bank ABC's Recovery Plan</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+
+        <section id="baseline" class="mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-teal-700">Bank ABC: Financial Health Baseline</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-slate-600">Before subjecting the bank to stress, we establish its current "Business as Usual" (BAU) position. These key performance indicators show a financially sound and resilient institution, well above regulatory minimums set by Otoritas Jasa Keuangan (OJK).</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-lg font-semibold text-slate-700">Capital Adequacy Ratio (CAR)</h3>
+                    <p class="text-4xl font-bold text-teal-600 mt-2">18.0%</p>
+                    <p class="text-sm text-slate-500 mt-2">OJK Minimum: ~8-14%</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-lg font-semibold text-slate-700">NPL (Gross)</h3>
+                    <p class="text-4xl font-bold text-teal-600 mt-2">2.5%</p>
+                    <p class="text-sm text-slate-500 mt-2">OJK Threshold: 5%</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-lg font-semibold text-slate-700">Liquidity Coverage Ratio (LCR)</h3>
+                    <p class="text-4xl font-bold text-teal-600 mt-2">150%</p>
+                    <p class="text-sm text-slate-500 mt-2">OJK Minimum: 100%</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-lg font-semibold text-slate-700">Return on Assets (ROA)</h3>
+                    <p class="text-4xl font-bold text-teal-600 mt-2">1.5%</p>
+                    <p class="text-sm text-slate-500 mt-2">Industry Average: ~1.2%</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="scenarios" class="mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-teal-700">Defining Severe but Plausible Stress Scenarios</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-slate-600">The core of stress testing is to simulate extreme market conditions. We apply two distinct, severe scenarios to quantify their impact on Bank ABC's capital, asset quality, and liquidity.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-teal-700 mb-3">Scenario A: Severe Economic Recession</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-600">
+                        <li><b>GDP Contraction:</b> Sharp -4% drop in national GDP.</li>
+                        <li><b>Credit Defaults:</b> Widespread corporate and retail loan defaults.</li>
+                        <li><b>Asset Devaluation:</b> Property and investment values fall significantly.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-teal-700 mb-3">Scenario B: Sudden Liquidity Shock</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-600">
+                        <li><b>Deposit Run:</b> 25% of retail deposits withdrawn in a short period.</li>
+                        <li><b>Market Freeze:</b> Interbank lending market becomes inaccessible.</li>
+                        <li><b>Reputation Damage:</b> Negative news triggers a crisis of confidence.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-teal-700">Stress Test Impact Analysis</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-slate-600">The charts below illustrate the direct impact of each scenario on the bank's core metrics, comparing them against the healthy baseline. This analysis reveals the primary vulnerabilities the Recovery Plan must address.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                     <h3 class="text-xl font-bold text-center text-teal-700 mb-4">Impact on Capital & Profitability</h3>
+                     <p class="text-sm text-center text-slate-500 mb-4">The recession scenario severely erodes capital (CAR) and pushes the bank into a loss (ROA), triggering capital-related recovery options. The liquidity shock has a less severe, but still significant, impact on profitability.</p>
+                    <div class="chart-container">
+                        <canvas id="capitalProfitabilityChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                     <h3 class="text-xl font-bold text-center text-teal-700 mb-4">Impact on Liquidity & Asset Quality</h3>
+                     <p class="text-sm text-center text-slate-500 mb-4">The liquidity shock causes a critical breach of the LCR minimum, while the recession leads to a spike in Non-Performing Loans (NPL) above the regulatory ceiling. Each scenario triggers different types of recovery actions.</p>
+                    <div class="chart-container">
+                        <canvas id="liquidityAssetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="activation" class="mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-teal-700">Recovery Plan Activation Triggers</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-slate-600">The Recovery Plan is not activated arbitrarily. It is governed by clear triggers linked to the key metrics. When a stress test shows a metric breaching its 'Crisis' threshold, the plan dictates which recovery options must be considered.</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center text-center gap-4">
+                    <div>
+                        <div class="p-4 bg-red-100 border-2 border-red-500 rounded-lg">
+                            <h4 class="font-bold text-red-700">Stress Event Occurs</h4>
+                            <p class="text-sm text-red-600">Recession or Liquidity Shock</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow transform rotate-90 md:rotate-0">→</div>
+                    <div>
+                        <div class="p-4 bg-yellow-100 border-2 border-yellow-500 rounded-lg">
+                            <h4 class="font-bold text-yellow-700">Metrics Breach Thresholds</h4>
+                            <p class="text-sm text-yellow-600">e.g., CAR &lt; 10% OR LCR &lt; 100%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flow-arrow">↓</div>
+                <div class="p-4 bg-teal-100 border-2 border-teal-500 rounded-lg text-center max-w-md mx-auto">
+                    <h4 class="font-bold text-teal-700">Activate Recovery Plan Options</h4>
+                    <p class="text-sm text-teal-600 mt-2">Board of Directors convenes to execute pre-defined actions based on the specific breach.</p>
+                </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-center">
+                    <div class="p-4 bg-slate-100 rounded-lg">
+                        <h5 class="font-semibold text-slate-800">For Capital Breach (Low CAR)</h5>
+                        <p class="text-sm text-slate-600">Capital Injection, Divestment of Assets, Halt Dividends.</p>
+                    </div>
+                    <div class="p-4 bg-slate-100 rounded-lg">
+                        <h5 class="font-semibold text-slate-800">For Liquidity Breach (Low LCR)</h5>
+                        <p class="text-sm text-slate-600">Emergency Funding, Sale of Liquid Assets, Halt New Lending.</p>
+                    </div>
+                 </div>
+            </div>
+        </section>
+
+        <section id="effectiveness">
+             <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-teal-700">Measuring Recovery Option Effectiveness</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-slate-600">The final step is to model the impact of a recovery action. This demonstrates the plan's viability by showing a clear path back to a stable and compliant position, even after a severe shock.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                 <h3 class="text-xl font-bold text-center text-teal-700 mb-4">Capital Restoration Post-Recession</h3>
+                 <p class="text-sm text-center text-slate-500 mb-4">In the recession scenario, Bank ABC's CAR falls to a critical 9.0%. The Recovery Plan calls for a capital injection. This simulation shows that the action is effective, raising the CAR back to a much healthier 12.5%, safely above the regulatory minimum.</p>
+                <div class="chart-container" style="height: 300px; max-height: 350px;">
+                    <canvas id="recoveryEffectivenessChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-12">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-slate-500 text-sm">
+            <p>&copy; 2025 Bank ABC. Confidential Recovery Plan Analysis.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltipTitleCallback = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const commonOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                ...tooltipTitleCallback
+            };
+
+            const capitalProfitabilityCtx = document.getElementById('capitalProfitabilityChart').getContext('2d');
+            new Chart(capitalProfitabilityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['CAR', 'ROA'],
+                    datasets: [
+                        {
+                            label: 'Baseline (BAU)',
+                            data: [18.0, 1.5],
+                            backgroundColor: '#059669',
+                            borderColor: '#047857',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Scenario A: Recession',
+                            data: [9.0, -0.5],
+                            backgroundColor: '#ef4444',
+                            borderColor: '#dc2626',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Scenario B: Liquidity Shock',
+                            data: [14.0, 0.8],
+                            backgroundColor: '#f59e0b',
+                            borderColor: '#d97706',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: commonOptions
+            });
+
+            const liquidityAssetCtx = document.getElementById('liquidityAssetChart').getContext('2d');
+            new Chart(liquidityAssetCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['LCR', 'NPL (Gross)'],
+                    datasets: [
+                         {
+                            label: 'Baseline (BAU)',
+                            data: [150, 2.5],
+                            backgroundColor: '#059669',
+                            borderColor: '#047857',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Scenario A: Recession',
+                            data: [110, 6.0],
+                            backgroundColor: '#ef4444',
+                            borderColor: '#dc2626',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Scenario B: Liquidity Shock',
+                            data: [70, 3.0],
+                            backgroundColor: '#f59e0b',
+                            borderColor: '#d97706',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                 options: commonOptions
+            });
+
+            const recoveryEffectivenessCtx = document.getElementById('recoveryEffectivenessChart').getContext('2d');
+            new Chart(recoveryEffectivenessCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Capital Adequacy Ratio (CAR)'],
+                    datasets: [
+                        {
+                            label: 'Stressed State (Recession)',
+                            data: [9.0],
+                            backgroundColor: '#ef4444',
+                            borderColor: '#dc2626',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'State After Recovery Action',
+                            data: [12.5],
+                            backgroundColor: '#10b981',
+                            borderColor: '#059669',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
