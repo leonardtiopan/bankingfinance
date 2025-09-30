@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Simulasi Recovery Plan - Bank ABC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .result-box {
+            transition: all 0.3s ease-in-out;
+        }
+        .bg-good { background-color: #dcfce7; color: #166534; }
+        .bg-warning { background-color: #fef9c3; color: #854d0e; }
+        .bg-crisis { background-color: #fee2e2; color: #991b1b; }
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-800">Kalkulator Simulasi Stress Test & Recovery Plan</h1>
+            <p class="mt-2 text-gray-600">Alat interaktif untuk mengukur dampak skenario krisis dan efektivitas opsi pemulihan.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Kolom Input -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Input Baseline -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700 border-b pb-2">1. Input Data Baseline Bank (dalam Miliar Rp)</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="totalModal" class="block text-sm font-medium text-gray-700">Total Modal</label>
+                            <input type="number" id="totalModal" class="form-input mt-1" value="18000">
+                        </div>
+                        <div>
+                            <label for="atmr" class="block text-sm font-medium text-gray-700">Aset Tertimbang Menurut Risiko (ATMR)</label>
+                            <input type="number" id="atmr" class="form-input mt-1" value="100000">
+                        </div>
+                        <div>
+                            <label for="hqla" class="block text-sm font-medium text-gray-700">Aset Likuid Berkualitas Tinggi (HQLA)</label>
+                            <input type="number" id="hqla" class="form-input mt-1" value="30000">
+                        </div>
+                        <div>
+                            <label for="arusKasKeluar" class="block text-sm font-medium text-gray-700">Total Arus Kas Keluar Bersih (30 hari)</label>
+                            <input type="number" id="arusKasKeluar" class="form-input mt-1" value="20000">
+                        </div>
+                        <div>
+                            <label for="totalAset" class="block text-sm font-medium text-gray-700">Total Aset</label>
+                            <input type="number" id="totalAset" class="form-input mt-1" value="120000">
+                        </div>
+                        <div>
+                            <label for="kreditBermasalah" class="block text-sm font-medium text-gray-700">Kredit Bermasalah (NPL)</label>
+                            <input type="number" id="kreditBermasalah" class="form-input mt-1" value="2000">
+                        </div>
+                         <div>
+                            <label for="totalKredit" class="block text-sm font-medium text-gray-700">Total Kredit</label>
+                            <input type="number" id="totalKredit" class="form-input mt-1" value="80000">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Skenario Stres -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700 border-b pb-2">2. Pilih Skenario & Input Stres (%)</h2>
+                     <div class="space-y-4">
+                        <div>
+                            <label for="creditLossShock" class="block text-sm font-medium text-gray-700">Skenario Resesi: Guncangan Kerugian Kredit (%)</label>
+                            <input type="number" id="creditLossShock" class="form-input mt-1" value="5">
+                        </div>
+                        <div>
+                            <label for="depositOutflow" class="block text-sm font-medium text-gray-700">Skenario Likuiditas: Arus Keluar Deposito (%)</label>
+                            <input type="number" id="depositOutflow" class="form-input mt-1" value="25">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opsi Pemulihan -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700 border-b pb-2">3. Input Opsi Pemulihan (dalam Miliar Rp)</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="capitalInjection" class="block text-sm font-medium text-gray-700">Injeksi Modal</label>
+                            <input type="number" id="capitalInjection" class="form-input mt-1" value="3000">
+                        </div>
+                        <div>
+                            <label for="emergencyFunding" class="block text-sm font-medium text-gray-700">Pendanaan Darurat (Repo, dll)</label>
+                            <input type="number" id="emergencyFunding" class="form-input mt-1" value="5000">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="calculateBtn" class="w-full bg-blue-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-800 transition-colors">Hitung Simulasi</button>
+            </div>
+
+            <!-- Kolom Hasil -->
+            <div class="lg:col-span-2">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Hasil Simulasi</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2">Baseline</h3>
+                             <div id="baselineResults" class="space-y-2"></div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 text-red-600">Kondisi Stres</h3>
+                            <div id="stressedResults" class="space-y-2"></div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 text-green-600">Pasca-Pemulihan</h3>
+                            <div id="recoveryResults" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center">
+             <a href="https://leonardtiopan.github.io/bankingfinance/index.html" class="inline-block bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors">
+                Back to the Main Page
+             </a>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', () => {
+            // --- Ambil Nilai Input ---
+            const totalModal = parseFloat(document.getElementById('totalModal').value);
+            const atmr = parseFloat(document.getElementById('atmr').value);
+            const hqla = parseFloat(document.getElementById('hqla').value);
+            const arusKasKeluar = parseFloat(document.getElementById('arusKasKeluar').value);
+            const totalAset = parseFloat(document.getElementById('totalAset').value);
+            const kreditBermasalah = parseFloat(document.getElementById('kreditBermasalah').value);
+            const totalKredit = parseFloat(document.getElementById('totalKredit').value);
+
+            const creditLossShock = parseFloat(document.getElementById('creditLossShock').value) / 100;
+            const depositOutflow = parseFloat(document.getElementById('depositOutflow').value) / 100;
+            
+            const capitalInjection = parseFloat(document.getElementById('capitalInjection').value);
+            const emergencyFunding = parseFloat(document.getElementById('emergencyFunding').value);
+
+            // --- 1. Kalkulasi Baseline ---
+            const baseCAR = (totalModal / atmr) * 100;
+            const baseLCR = (hqla / arusKasKeluar) * 100;
+            const baseNPL = (kreditBermasalah / totalKredit) * 100;
+
+            // --- 2. Kalkulasi Kondisi Stres ---
+            // Skenario Resesi (mempengaruhi CAR & NPL)
+            const kerugianKredit = totalKredit * creditLossShock;
+            const stressedModal = totalModal - kerugianKredit;
+            const stressedCAR = (stressedModal / atmr) * 100;
+            const stressedNPLAmount = kreditBermasalah + kerugianKredit;
+            const stressedNPL = (stressedNPLAmount / totalKredit) * 100;
+
+            // Skenario Likuiditas (mempengaruhi LCR)
+            const outflowTambahan = (totalAset - totalModal) * depositOutflow; // Proksi liabilitas
+            const stressedArusKasKeluar = arusKasKeluar + outflowTambahan;
+            const stressedLCR = (hqla / stressedArusKasKeluar) * 100; // Asumsi HQLA belum dijual
+            
+            // --- 3. Kalkulasi Pasca-Pemulihan ---
+            const recoveredModal = stressedModal + capitalInjection;
+            const recoveredCAR = (recoveredModal / atmr) * 100;
+            
+            const recoveredHQLA = hqla + emergencyFunding; // hqla awal + dana darurat
+            const recoveredLCR = (recoveredHQLA / stressedArusKasKeluar) * 100;
+            
+            // --- Tampilkan Hasil ---
+            displayResults('baselineResults', baseCAR, baseLCR, baseNPL);
+            displayResults('stressedResults', stressedCAR, stressedLCR, stressedNPL);
+            displayResults('recoveryResults', recoveredCAR, recoveredLCR, stressedNPL); // NPL tidak pulih seketika
+        });
+
+        function displayResults(elementId, car, lcr, npl) {
+            const container = document.getElementById(elementId);
+            
+            const carStatus = getStatus(car, 14, 10); // OJK min bervariasi, asumsi 10% crisis
+            const lcrStatus = getStatus(lcr, 100, 85);
+            const nplStatus = getStatus(npl, 5, 5, true); // Inverted logic for NPL
+            
+            container.innerHTML = `
+                <div class="result-box ${carStatus.class} p-3 rounded-md">
+                    <p class="font-semibold text-sm">CAR</p>
+                    <p class="font-bold text-xl">${car.toFixed(2)}%</p>
+                </div>
+                <div class="result-box ${lcrStatus.class} p-3 rounded-md">
+                    <p class="font-semibold text-sm">LCR</p>
+                    <p class="font-bold text-xl">${lcr.toFixed(2)}%</p>
+                </div>
+                <div class="result-box ${nplStatus.class} p-3 rounded-md">
+                    <p class="font-semibold text-sm">NPL (Gross)</p>
+                    <p class="font-bold text-xl">${npl.toFixed(2)}%</p>
+                </div>
+            `;
+        }
+        
+        function getStatus(value, goodThreshold, crisisThreshold, inverted = false) {
+            if (inverted) { // Untuk NPL, lebih rendah lebih baik
+                if (value >= crisisThreshold) {
+                    return { class: 'bg-crisis' };
+                }
+                return { class: 'bg-good' };
+            }
+
+            if (value >= goodThreshold) {
+                return { class: 'bg-good' };
+            } else if (value < goodThreshold && value >= crisisThreshold) {
+                return { class: 'bg-warning' };
+            } else {
+                return { class: 'bg-crisis' };
+            }
+        }
+
+        // Jalankan kalkulasi saat halaman pertama kali dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('calculateBtn').click();
+        });
+    </script>
+</body>
+</html>
