@@ -63,8 +63,10 @@
 
         /* GRAFIS TAMBANG (Kiri) */
         .pit-bg { position: absolute; bottom: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, #795548, #795548 10px, #6d4c41 10px, #6d4c41 20px); clip-path: polygon(0 0, 100% 0, 100% 100%, 80% 80%, 20% 80%, 0 100%); opacity: 0.8; }
-        /* Scope Factor 1.0 logic: Truck stops only on flood */
+        
+        /* TRUK: Scope Factor Logic. Bergerak kecuali banjir ekstrem */
         .truck { position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%); font-size: 2.8rem; z-index: 5; transition: bottom 0.3s; }
+        
         /* Animasi Truk Bergerak (Getar) */
         @keyframes rumble { 0% { transform: translateX(-50%) translateY(0px); } 50% { transform: translateX(-50%) translateY(-2px); } 100% { transform: translateX(-50%) translateY(0px); } }
         .truck.moving { animation: rumble 0.5s infinite; }
@@ -223,8 +225,7 @@
 
             // --- LOGIKA TAMBANG (KIRI) ---
             let pitH = 0;
-            // Di Excel: Very Wet starts around 1.8. Extreme Wet > 2.3
-            // Kita visualisasikan banjir mulai naik di > 1.4
+            // Visualisasi Hujan dimulai di > 1.4 (Sesuai kondisi Wet di Damage Function)
             if(ratio > 1.4) {
                 pitH = (ratio - 1.4) * 80; 
                 rainEffect.style.display = 'block';
@@ -240,46 +241,47 @@
         }
 
         function updateStatus(ratio, bargePos) {
-            // Reset Styles
+            // Reset Styles: Kapal tegak, Truk jalan, Caption mati
             barge.style.transform = "translateX(-50%) rotate(0deg)";
-            truck.classList.add('moving'); // Default truck bergerak
+            truck.classList.add('moving'); 
             capWet.className = "caption-box"; 
             capDry.className = "caption-box";
 
-            // --- SKENARIO KERING (Excel: Dry Acute < 0.45, Loss 12.5% Net) ---
+            // --- SKENARIO KERING (Dry Acute 2024) ---
+            // Data Excel: Trigger < 0.45. Loss 12.5% x 3.33T = 417 Miliar
             if (ratio <= 0.4) {
                 statusBox.className = "status-box status-dry";
                 statusBox.innerText = "BAHAYA: KERING AKUT (Logistik Stop)";
-                // Kalkulasi Excel: 3333 M * 12.5% = 416.6 Miliar
                 financeText.innerHTML = "Loss: <strong>IDR 417 Miliar</strong> (Tongkang Kandas)";
                 
-                // Visual Effect: Tongkang miring, tapi TRUK TETAP GERAK (Scope Factor 0.25)
+                // Visual Effect: Tongkang miring. TRUK TETAP JALAN (Scope 25%)
                 if (bargePos <= 20.5) barge.style.transform = "translateX(-50%) rotate(-5deg)";
                 capDry.classList.add("active-dry");
             } 
             
-            // --- SKENARIO BASAH EKSTREM (Excel: Extreme Wet > 2.3, Loss 50% Net) ---
+            // --- SKENARIO BANJIR EKSTREM (Wet Shock 2024) ---
+            // Data Excel: Trigger > 2.3. Loss 50% x 3.33T = 1.67 Triliun
             else if (ratio >= 2.3) {
                 statusBox.className = "status-box status-wet";
                 statusBox.innerText = "BAHAYA: BANJIR EKSTREM";
-                // Kalkulasi Excel: 3333 M * 50% = 1.666 Miliar
                 financeText.innerHTML = "Loss: <strong>IDR 1,67 Triliun</strong> (Tambang Lumpuh)";
                 
-                // Visual Effect: Truk berhenti karena banjir (Scope Factor 1.0)
+                // Visual Effect: TRUK BERHENTI (Scope 100%)
                 truck.classList.remove('moving');
                 capWet.classList.add("active-wet");
             }
 
-            // --- SKENARIO SANGAT BASAH (Excel: Very Wet ~1.8, Loss 20% Net) ---
+            // --- SKENARIO SANGAT BASAH (Very Wet) ---
+            // Data Excel: Trigger >= 1.8. Loss 20% x 3.33T = 667 Miliar
             else if (ratio >= 1.8) {
                 statusBox.className = "status-box status-warn-wet"; 
                 statusBox.innerText = "WASPADA: SANGAT BASAH";
-                // Kalkulasi Excel: 3333 M * 20% = 666.6 Miliar
                 financeText.innerHTML = "Loss: <strong>IDR 667 Miliar</strong> (Jalan Licin)";
                 capWet.classList.add("active-wet");
             }
 
-            // --- SKENARIO PERINGATAN KERING (Excel: Inflow < 0.8) ---
+            // --- SKENARIO PERINGATAN KERING ---
+            // Visual Buffer sebelum masuk Dry Acute
             else if (ratio < 0.8) {
                  statusBox.className = "status-box status-warn-dry"; 
                  statusBox.innerText = "WASPADA: SUNGAI SURUT";
