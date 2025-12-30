@@ -2,81 +2,141 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Simulasi Risiko Iklim PTBA - U-Shape Model</title>
     <style>
-        /* --- GAYA UMUM --- */
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #333; }
-        .dashboard { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 900px; width: 100%; }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 5px; margin-top: 0; }
-        p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-size: 1.0em; }
-        
-        /* --- HEADER KREDIT PENULIS --- */
-        .credits-header { text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f1f1f1; background: #fdfdfd; padding-top: 10px; border-radius: 8px; }
-        .credits-header p { margin: 5px 0; font-size: 0.95em; color: #555; }
-        .credits-author { font-weight: 700; color: #2c3e50; font-size: 1.05em; }
-        .credits-link { color: #27ae60; text-decoration: none; font-weight: 600; transition: color 0.2s; }
-        .credits-link:hover { text-decoration: underline; color: #219653; }
+        /* --- RESET & LAYOUT UTAMA --- */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: #f0f2f5; 
+            margin: 0; padding: 0;
+            height: 100vh; /* Kunci tinggi layar */
+            width: 100vw;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; /* Mencegah scroll bar muncul */
+            color: #333;
+        }
 
-        /* --- CONTAINER VISUALISASI UTAMA --- */
-        .risk-container { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 20px; height: 320px; }
-        .zone { flex: 1; border: 2px solid #e0e0e0; border-radius: 12px; position: relative; overflow: hidden; background: #eef2f3; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
-        
-        /* Label di dalam gambar */
-        .label { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); text-align: center; font-weight: 700; color: #444; z-index: 10; background: rgba(255,255,255,0.9); padding: 6px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 0.9em; width: fit-content; white-space: nowrap; }
+        /* Container Utama sebagai Flex Column agar isi menyesuaikan tinggi */
+        .dashboard { 
+            background: white; 
+            width: 100%; max-width: 1000px;
+            height: 100%; max-height: 100%; /* Full Height di HP */
+            display: flex; flex-direction: column;
+            padding: 15px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
 
-        /* --- VISUALISASI KIRI: TAMBANG (PIT) --- */
-        /* Latar belakang pit berundak */
-        .pit-bg { position: absolute; bottom: 0; width: 100%; height: 100%; 
-                  background: repeating-linear-gradient(45deg, #795548, #795548 10px, #6d4c41 10px, #6d4c41 20px); /* Tekstur tanah */
-                  clip-path: polygon(0 0, 100% 0, 100% 100%, 85% 85%, 70% 100%, 55% 85%, 40% 100%, 25% 85%, 10% 100%, 0 85%); /* Bentuk undakan */
-                  opacity: 0.8; z-index: 1; }
-        .truck { position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%); font-size: 55px; z-index: 5; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3)); }
-        .water-pit { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, #2980b9, #3498db); opacity: 0.85; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 6; border-top: 3px solid #85c1e9; }
+        /* --- HEADER & KREDIT (Compact) --- */
+        .header-section { flex: 0 0 auto; text-align: center; margin-bottom: 10px; }
+        h2 { margin: 5px 0; color: #2c3e50; font-size: 1.4rem; }
+        .subtitle { margin: 0; color: #7f8c8d; font-size: 0.9rem; }
+        
+        .credits-line { font-size: 0.75rem; color: #888; margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px; }
+        .credits-author { font-weight: 700; color: #444; }
+        .credits-link { color: #27ae60; text-decoration: none; }
 
-        /* --- VISUALISASI KANAN: SUNGAI --- */
-        .river-bed { position: absolute; bottom: 0; width: 100%; height: 20%; background: #5d4037; z-index: 1; border-top: 3px solid #4e342e; }
-        /* Air sungai dimulai dari atas dasar sungai (bottom: 20%) */
-        .water-river { position: absolute; bottom: 20%; width: 100%; background: linear-gradient(to top, #2980b9, #3498db); opacity: 0.8; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2; border-top: 3px solid #aed6f1; }
-        .barge { position: absolute; left: 50%; transform: translateX(-50%); font-size: 65px; transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease-out; z-index: 5; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); }
-        
-        /* --- EFEK HUJAN & DASHBOARD --- */
-        .rain { position: absolute; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 8; }
-        .drop { position: absolute; width: 3px; height: 15px; background: rgba(173, 216, 230, 0.8); animation: fall 0.4s linear infinite; border-radius: 50%; }
-        @keyframes fall { to { transform: translateY(350px); opacity: 0; } }
-        
-        /* --- AREA KETERANGAN GAMBAR (CAPTIONS) - BARU --- */
-        .caption-container { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 30px; border-top: 2px dashed #eee; padding-top: 20px; }
-        .caption-box { flex: 1; background: #fdfdfd; padding: 15px 20px; border-radius: 10px; border-left: 5px solid #ccc; font-size: 0.9em; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .caption-box h3 { margin-top: 0; margin-bottom: 10px; color: #444; font-size: 1.1em; display: flex; align-items: center; }
-        .caption-box.left { border-color: #3498db; } /* Biru untuk basah */
-        .caption-box.left h3::before { content: '🌧️'; margin-right: 8px; }
-        .caption-box.right { border-color: #e74c3c; } /* Merah untuk kering */
-        .caption-box.right h3::before { content: '☀️'; margin-right: 8px; }
+        /* --- VISUALISASI (Flex Grow untuk mengisi ruang kosong) --- */
+        .risk-container { 
+            flex: 1 1 auto; /* Mengisi sisa ruang vertikal */
+            display: flex; 
+            gap: 10px; 
+            min-height: 0; /* Penting agar flex item bisa mengecil */
+            margin-bottom: 10px;
+        }
 
-        /* --- PANEL KONTROL & STATUS --- */
-        .control-panel { background: #f8f9fa; padding: 25px; border-radius: 12px; text-align: center; border: 1px solid #e9ecef; }
-        label { font-weight: 600; color: #555; font-size: 1.1em; }
-        input[type=range] { width: 90%; margin: 20px 0; cursor: pointer; height: 8px; background: #d3d3d3; outline: none; border-radius: 5px; -webkit-appearance: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 25px; height: 25px; background: #2980b9; cursor: pointer; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .value-display { font-size: 1.3em; font-weight: 800; color: #2980b9; background: #eef2f3; padding: 2px 10px; border-radius: 5px; }
+        .zone { 
+            flex: 1; /* Bagi dua rata kiri-kanan */
+            border: 2px solid #e0e0e0; 
+            border-radius: 10px; 
+            position: relative; 
+            overflow: hidden; 
+            background: #eef2f3;
+        }
         
-        /* Status Bar */
-        .status-box { margin-top: 25px; padding: 18px; border-radius: 10px; text-align: center; font-weight: 700; color: white; transition: background 0.4s ease, transform 0.2s ease; font-size: 1.1em; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .status-normal { background: linear-gradient(135deg, #27ae60, #2ecc71); }
-        .status-dry { background: linear-gradient(135deg, #c0392b, #e74c3c); }
-        .status-wet { background: linear-gradient(135deg, #2980b9, #3498db); }
-        .status-warning-wet { background: linear-gradient(135deg, #d35400, #e67e22); }
-        .status-warning-dry { background: linear-gradient(135deg, #f39c12, #f1c40f); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        
-        #financialImpact { margin-top: 15px; font-size: 1.1em; color: #333; font-weight: 600; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; display: inline-block; border: 1px solid #eee; }
+        /* Label dalam gambar */
+        .label { 
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%); 
+            background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 15px; 
+            font-size: 0.8rem; font-weight: bold; color: #444; white-space: nowrap; z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-        /* Responsive Mobile */
-        @media (max-width: 768px) {
-            .risk-container, .caption-container { flex-direction: column; height: auto; }
-            .zone, .caption-box { width: 100%; margin-bottom: 15px; }
-            .risk-container { height: 600px; gap: 10px; }
-            .caption-container { gap: 10px; }
+        /* --- ELEMENT GRAFIS --- */
+        /* Tambang (Kiri) */
+        .pit-bg { position: absolute; bottom: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, #795548, #795548 10px, #6d4c41 10px, #6d4c41 20px); clip-path: polygon(0 0, 100% 0, 100% 100%, 80% 80%, 20% 80%, 0 100%); opacity: 0.8; }
+        .truck { position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 5; transition: bottom 0.3s; }
+        .water-pit { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, #2980b9, #3498db); opacity: 0.85; transition: height 0.5s; z-index: 6; border-top: 2px solid #aed6f1; }
+
+        /* Sungai (Kanan) */
+        .river-bed { position: absolute; bottom: 0; width: 100%; height: 20%; background: #5d4037; z-index: 1; border-top: 2px solid #4e342e; }
+        .water-river { position: absolute; bottom: 20%; width: 100%; background: linear-gradient(to top, #2980b9, #3498db); opacity: 0.8; transition: height 0.5s; z-index: 2; border-top: 2px solid #aed6f1; }
+        .barge { position: absolute; left: 50%; transform: translateX(-50%); font-size: 3.5rem; transition: bottom 0.5s, transform 0.5s; z-index: 5; }
+
+        /* Hujan */
+        .rain { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 8; }
+        .drop { position: absolute; width: 2px; height: 10px; background: blue; animation: fall 0.4s linear infinite; }
+        @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
+
+        /* --- KETERANGAN (Captions) --- */
+        /* Kita buat caption menyatu/compact di bawah gambar */
+        .caption-section {
+            flex: 0 0 auto;
+            display: flex; gap: 10px; margin-bottom: 10px;
+        }
+        .caption-box {
+            flex: 1; 
+            font-size: 0.75rem; line-height: 1.2; 
+            padding: 8px; border-radius: 8px; background: #fff; border: 1px solid #ddd;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .caption-title { font-weight: bold; margin-bottom: 3px; font-size: 0.8rem; }
+        
+        /* Warna Caption Aktif (Visual Cue) */
+        .caption-box.active-wet { border: 2px solid #3498db; background-color: #f0f8ff; }
+        .caption-box.active-dry { border: 2px solid #e74c3c; background-color: #fff5f5; }
+
+        /* --- KONTROL (Fixed Height) --- */
+        .control-panel { 
+            flex: 0 0 auto; 
+            background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #e9ecef; text-align: center; 
+        }
+        
+        /* Slider Styling */
+        input[type=range] { width: 100%; margin: 10px 0; cursor: pointer; height: 6px; background: #ccc; border-radius: 5px; outline: none; -webkit-appearance: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: #2c3e50; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+
+        .status-box { 
+            padding: 10px; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 5px; 
+            font-size: 0.95rem; transition: background 0.3s;
+        }
+        .status-normal { background: #27ae60; }
+        .status-dry { background: #c0392b; }
+        .status-wet { background: #2980b9; }
+        .status-warn-wet { background: #e67e22; }
+        .status-warn-dry { background: #f39c12; }
+
+        #financialImpact { font-size: 0.9rem; font-weight: 600; color: #444; margin: 0; }
+
+        /* --- RESPONSIVE MOBILE TWEAKS --- */
+        @media (max-width: 600px) {
+            .dashboard { padding: 10px; border-radius: 0; max-height: 100vh; }
+            h2 { font-size: 1.1rem; }
+            .subtitle { font-size: 0.75rem; display: none; /* Hide subtitle on tiny screens to save space */ }
+            
+            /* Gambar tetap side-by-side tapi ikon dikecilkan */
+            .truck { font-size: 2rem; }
+            .barge { font-size: 2.5rem; }
+            
+            /* Sembunyikan teks caption panjang di HP, ganti indikator simpel */
+            .caption-text { display: none; } 
+            .caption-title { font-size: 0.7rem; text-align: center; margin: 0; }
+            .caption-box { padding: 5px; text-align: center; }
+            
+            /* Kontrol lebih padat */
+            .control-panel { padding: 10px; }
+            .status-box { font-size: 0.85rem; padding: 8px; }
         }
     </style>
 </head>
@@ -84,55 +144,60 @@
 
     <div class="dashboard">
         
-        <div class="credits-header">
-            <p class="credits-author">Created by Leonard Tiopan Panjaitan, MT, CSRA, CGPS, CPS - 30 December 2025</p>
-            <p>this climate risk simulation is supported by <a href="https://greenproductivity.online" target="_blank" class="credits-link">greenproductivity.online</a></p>
+        <div class="header-section">
+            <div class="credits-line">
+                <span class="credits-author">Created by Leonard Tiopan Panjaitan, MT, CSRA, CGPS, CPS</span><br>
+                Supported by <a href="https://greenproductivity.online" class="credits-link">greenproductivity.online</a>
+            </div>
+            <h2>PTBA Climate Risk Stress Test</h2>
+            <p class="subtitle">Geser slider untuk melihat dampak "U-Shape" (Kering vs Basah)</p>
         </div>
-
-        <h2>PTBA Climate Risk Stress Test</h2>
-        <p class="subtitle">Visualisasi Interaktif Model "U-Shape": Dampak Ekstrem Basah & Kering terhadap Operasional</p>
 
         <div class="risk-container">
             <div class="zone" id="zone-mine">
-                <div class="label">AREA TAMBANG (OPEN PIT)</div>
-                <div class="pit-bg"></div> <div class="truck">🚛</div> <div class="water-pit" id="pitWater" style="height: 0%;"></div> <div class="rain" id="rainEffect"></div> </div>
+                <div class="label">AREA TAMBANG</div>
+                <div class="pit-bg"></div>
+                <div class="truck">🚛</div>
+                <div class="water-pit" id="pitWater" style="height: 0%;"></div>
+                <div class="rain" id="rainEffect"></div>
+            </div>
 
             <div class="zone" id="zone-river">
-                <div class="label">LOGISTIK SUNGAI MUSI</div>
+                <div class="label">LOGISTIK SUNGAI</div>
                 <div class="water-river" id="riverWater" style="height: 50%;"></div>
                 <div class="river-bed"></div>
                 <div class="barge" id="bargeShip" style="bottom: 60%;">🚢</div> 
             </div>
         </div>
 
-        <div class="caption-container">
-            <div class="caption-box left">
-                <h3>Risiko Basah: Banjir Tambang (Pit Flooding)</h3>
-                <p>
-                    Terjadi saat <strong>Inflow Ratio tinggi (Geser Kanan)</strong>. Curah hujan ekstrem menyebabkan air menggenangi dasar tambang (sump) melebihi kapasitas pompa. Jalan tambang menjadi licin dan berbahaya. Akibatnya, operasional alat berat (truk & ekskavator) harus dihentikan total demi keselamatan, menyebabkan kehilangan produksi batubara secara langsung.
-                </p>
+        <div class="caption-section">
+            <div class="caption-box" id="cap-wet">
+                <div class="caption-title">🌧️ RISIKO BASAH</div>
+                <div class="caption-text">Banjir Tambang (Pit Flooding) & Jalan Licin. Produksi terhenti.</div>
             </div>
-            <div class="caption-box right">
-                <h3>Risiko Kering: Pendangkalan Sungai (Grounding)</h3>
-                <p>
-                    Terjadi saat <strong>Inflow Ratio rendah (Geser Kiri)</strong>. Musim kemarau panjang menyebabkan debit air Sungai Musi surut drastis. Tongkang tidak bisa memuat kapasitas penuh (light-loading) atau bahkan kandas di dasar sungai. Ini melumpuhkan jalur logistik utama menuju pelabuhan, menghambat penjualan meski produksi di tambang normal.
-                </p>
+            <div class="caption-box" id="cap-dry">
+                <div class="caption-title">☀️ RISIKO KERING</div>
+                <div class="caption-text">Sungai Surut (Grounding). Logistik tongkang terhambat/stop.</div>
             </div>
         </div>
 
         <div class="control-panel">
-            <label for="inflowSlider">Kontrol Inflow Ratio (Curah Hujan): <span id="ratioVal" class="value-display">1.0</span></label><br>
+            <div style="display:flex; justify-content:space-between; font-size:0.9rem; font-weight:bold; margin-bottom:5px;">
+                <span>Kering (0.1)</span>
+                <span style="color:#2980b9;">Inflow Ratio: <span id="ratioVal">1.0</span></span>
+                <span>Basah (2.5)</span>
+            </div>
+            
             <input type="range" id="inflowSlider" min="0.1" max="2.5" step="0.1" value="1.0">
             
             <div id="statusBox" class="status-box status-normal">
-                STATUS: NORMAL (Operasi Optimal)
+                NORMAL: OPERASI OPTIMAL
             </div>
-            <p id="financialImpact">Est. Revenue Loss: IDR 0 Miliar</p>
+            <p id="financialImpact">Est. Revenue Loss: IDR 0</p>
         </div>
     </div>
 
     <script>
-        // Mengambil elemen dari HTML
         const slider = document.getElementById('inflowSlider');
         const ratioDisplay = document.getElementById('ratioVal');
         const pitWater = document.getElementById('pitWater');
@@ -141,122 +206,97 @@
         const statusBox = document.getElementById('statusBox');
         const financeText = document.getElementById('financialImpact');
         const rainEffect = document.getElementById('rainEffect');
+        const capWet = document.getElementById('cap-wet');
+        const capDry = document.getElementById('cap-dry');
 
-        // Jalankan sekali saat halaman dimuat
         updateSimulation(1.0);
 
-        // Jalankan setiap kali slider digeser
-        slider.oninput = function() {
-            let ratio = parseFloat(this.value);
-            updateSimulation(ratio);
-        }
+        slider.addEventListener('input', function() {
+            updateSimulation(parseFloat(this.value));
+        });
 
-        // Fungsi Utama Pengendali Simulasi
         function updateSimulation(ratio) {
             ratioDisplay.innerText = ratio.toFixed(1);
 
-            // --- LOGIKA 1: SUNGAI MUSI (KANAN) ---
-            // Dasar sungai (bed) ada di ketinggian 20%.
-            // riverH adalah tinggi air di ATAS dasar sungai.
+            // --- LOGIKA SUNGAI (KANAN) ---
+            let riverH = 50; 
+            if(ratio < 1.0) riverH = Math.max(2, ratio * 50); 
+            else riverH = 50 + (ratio-1)*15; 
             
-            let riverH = 50; // Default normal (50% di atas dasar)
-            
-            if(ratio < 1.0) {
-                // KERING: Air surut drastis. Jika ratio 0.1, air hampir habis.
-                riverH = Math.max(2, ratio * 50); 
-            } else {
-                // BASAH: Air naik sedikit dari normal.
-                riverH = 50 + (ratio-1)*15; 
-            }
-            
-            // Terapkan tinggi air ke elemen HTML
             riverWater.style.height = riverH + "%";
 
-            // Fisika Posisi Tongkang
-            // Level Permukaan Air = 20% (Dasar) + riverH
-            let waterSurfaceLevel = 20 + riverH;
-            // Draft (bagian kapal yang tenggelam) = misal 12%
+            let waterSurface = 20 + riverH; // 20% is bed height
             let bargeDraft = 12; 
-            // Posisi ideal dasar kapal = Permukaan air - Draft
-            let idealBargeBottom = waterSurfaceLevel - bargeDraft;
+            let idealBottom = waterSurface - bargeDraft;
+            let actualBottom = Math.max(20, idealBottom); // Grounding check
+            barge.style.bottom = actualBottom + "%";
 
-            // CEK KANDAS (GROUNDING):
-            // Dasar kapal tidak boleh lebih rendah dari dasar sungai (20%).
-            // Gunakan Math.max untuk menahan kapal di level 20% jika air terlalu surut.
-            let actualBargeBottom = Math.max(20, idealBargeBottom);
-            
-            barge.style.bottom = actualBargeBottom + "%";
-
-            // --- LOGIKA 2: TAMBANG (KIRI) ---
+            // --- LOGIKA TAMBANG (KIRI) ---
             let pitH = 0;
-            // Hujan dan banjir dimulai jika ratio > 1.4
             if(ratio > 1.4) {
-                // Air naik cepat. Faktor pengali 70 menentukan kecepatan kenaikan.
                 pitH = (ratio - 1.4) * 75; 
                 rainEffect.style.display = 'block';
-                createRain(); // Panggil fungsi animasi hujan
+                createRain();
             } else {
                 rainEffect.style.display = 'none';
-                rainEffect.innerHTML = ''; // Hentikan hujan
+                rainEffect.innerHTML = ''; 
             }
-            // Batasi tinggi air maksimal 100%
             pitWater.style.height = Math.min(100, pitH) + "%";
 
-            // --- LOGIKA 3: UPDATE STATUS & TEKS FINANSIAL ---
-            updateStatus(ratio, actualBargeBottom);
+            // --- UPDATE STATUS & CAPTION HIGHLIGHT ---
+            updateStatus(ratio, actualBottom);
         }
 
-        // Fungsi untuk Mengubah Warna dan Teks Status Box
-        function updateStatus(ratio, bargeBottomPos) {
-            // Reset Rotasi Kapal (agar tegak kembali saat air naik)
-            if (bargeBottomPos > 20.5) {
-                 barge.style.transform = "translateX(-50%) rotate(0deg)";
-            }
+        function updateStatus(ratio, bargePos) {
+            // Reset Styles
+            barge.style.transform = "translateX(-50%) rotate(0deg)";
+            capWet.className = "caption-box"; // Reset highlight
+            capDry.className = "caption-box";
 
-            // --- KONDISI EKSTREM KERING ---
             if (ratio <= 0.4) {
+                // KERING
                 statusBox.className = "status-box status-dry";
-                statusBox.innerText = "BAHAYA: EKSTREM KERING (Tongkang Kandas)";
-                financeText.innerHTML = "Est. Revenue Loss: <strong>IDR 416 Miliar</strong> (Logistik Terhenti Total)";
-                // Efek Visual Kandas: Kapal Miring sedikit seolah di atas lumpur
-                if (bargeBottomPos <= 20.1) {
-                     barge.style.transform = "translateX(-50%) rotate(-5deg)";
-                }
+                statusBox.innerText = "BAHAYA: EKSTREM KERING";
+                financeText.innerHTML = "Loss: <strong>IDR 416 Miliar</strong> (Logistik Stop)";
+                if (bargePos <= 20.5) barge.style.transform = "translateX(-50%) rotate(-5deg)";
+                capDry.classList.add("active-dry");
             } 
-            // --- KONDISI EKSTREM BASAH (BANJIR) ---
             else if (ratio >= 2.1) {
+                // BASAH PARAH
                 statusBox.className = "status-box status-wet";
-                statusBox.innerText = "BAHAYA: BANJIR TAMBANG (Produksi Stop)";
-                financeText.innerHTML = "Est. Revenue Loss: <strong>IDR 1.66 Triliun</strong> (Pit Flooding Total)";
+                statusBox.innerText = "BAHAYA: BANJIR TAMBANG";
+                financeText.innerHTML = "Loss: <strong>IDR 1.66 Triliun</strong> (Produksi Stop)";
+                capWet.classList.add("active-wet");
             }
-            // --- KONDISI WASPADA BASAH (HUJAN DERAS) ---
             else if (ratio >= 1.5) {
-                statusBox.className = "status-box status-warning-wet"; 
-                statusBox.innerText = "WASPADA: SANGAT BASAH (Jalan Licin)";
-                financeText.innerHTML = "Est. Revenue Loss: <strong>IDR 666 Miliar</strong> (Kecepatan Alat Menurun)";
+                // WASPADA BASAH
+                statusBox.className = "status-box status-warn-wet"; 
+                statusBox.innerText = "WASPADA: SANGAT BASAH";
+                financeText.innerHTML = "Loss: <strong>IDR 666 Miliar</strong> (Jalan Licin)";
+                capWet.classList.add("active-wet");
             }
-            // --- KONDISI WASPADA KERING (SURUT) ---
             else if (ratio < 0.8) {
-                 statusBox.className = "status-box status-warning-dry"; 
-                 statusBox.innerText = "WASPADA: SUNGAI SURUT (Light Loading)";
-                 financeText.innerHTML = "Est. Revenue Loss: <strong>IDR 100-200 Miliar</strong> (Kapasitas Angkut Berkurang)";
+                 // WASPADA KERING
+                 statusBox.className = "status-box status-warn-dry"; 
+                 statusBox.innerText = "WASPADA: SUNGAI SURUT";
+                 financeText.innerHTML = "Loss: <strong>IDR 100-200 M</strong> (Light Loading)";
+                 capDry.classList.add("active-dry");
             }
-            // --- KONDISI NORMAL ---
             else {
+                // NORMAL
                 statusBox.className = "status-box status-normal";
                 statusBox.innerText = "NORMAL: OPERASI OPTIMAL";
-                financeText.innerHTML = "Est. Revenue Loss: <strong>IDR 0</strong>";
+                financeText.innerHTML = "Loss: <strong>IDR 0</strong>";
             }
         }
 
-        // Fungsi sederhana untuk membuat animasi tetesan hujan
         function createRain() {
-            if(rainEffect.childElementCount > 25) return; // Batasi jumlah tetesan agar tidak berat
-            for(let i=0; i<4; i++){
+            if(rainEffect.childElementCount > 20) return;
+            for(let i=0; i<3; i++){
                 let drop = document.createElement('div');
                 drop.className = 'drop';
-                drop.style.left = Math.random() * 100 + '%'; // Posisi horizontal acak
-                drop.style.animationDuration = (Math.random() * 0.5 + 0.3) + 's'; // Kecepatan acak
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDuration = (Math.random() * 0.5 + 0.3) + 's';
                 rainEffect.appendChild(drop);
             }
         }
