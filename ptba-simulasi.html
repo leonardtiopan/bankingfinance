@@ -11,43 +11,42 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             background: #f0f2f5; 
             margin: 0; padding: 0;
-            height: 100vh; /* Kunci tinggi layar */
+            height: 100vh; 
             width: 100vw;
             display: flex; justify-content: center; align-items: center;
-            overflow: hidden; /* Mencegah scroll bar muncul */
+            overflow: hidden; 
             color: #333;
         }
 
-        /* Container Utama sebagai Flex Column agar isi menyesuaikan tinggi */
         .dashboard { 
             background: white; 
             width: 100%; max-width: 1000px;
-            height: 100%; max-height: 100%; /* Full Height di HP */
+            height: 100%; max-height: 100%; 
             display: flex; flex-direction: column;
             padding: 15px; 
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        /* --- HEADER & KREDIT (Compact) --- */
-        .header-section { flex: 0 0 auto; text-align: center; margin-bottom: 10px; }
-        h2 { margin: 5px 0; color: #2c3e50; font-size: 1.4rem; }
-        .subtitle { margin: 0; color: #7f8c8d; font-size: 0.9rem; }
+        /* --- HEADER --- */
+        .header-section { flex: 0 0 auto; text-align: center; margin-bottom: 8px; }
+        h2 { margin: 5px 0; color: #2c3e50; font-size: 1.3rem; }
+        .subtitle { margin: 0; color: #7f8c8d; font-size: 0.85rem; }
         
-        .credits-line { font-size: 0.75rem; color: #888; margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px; }
+        .credits-line { font-size: 0.7rem; color: #888; margin-top: 2px; border-top: 1px solid #eee; padding-top: 5px; }
         .credits-author { font-weight: 700; color: #444; }
         .credits-link { color: #27ae60; text-decoration: none; }
 
-        /* --- VISUALISASI (Flex Grow untuk mengisi ruang kosong) --- */
+        /* --- VISUALISASI --- */
         .risk-container { 
-            flex: 1 1 auto; /* Mengisi sisa ruang vertikal */
+            flex: 1 1 auto; 
             display: flex; 
             gap: 10px; 
-            min-height: 0; /* Penting agar flex item bisa mengecil */
-            margin-bottom: 10px;
+            min-height: 0; 
+            margin-bottom: 8px;
         }
 
         .zone { 
-            flex: 1; /* Bagi dua rata kiri-kanan */
+            flex: 1; 
             border: 2px solid #e0e0e0; 
             border-radius: 10px; 
             position: relative; 
@@ -55,61 +54,60 @@
             background: #eef2f3;
         }
         
-        /* Label dalam gambar */
         .label { 
             position: absolute; top: 10px; left: 50%; transform: translateX(-50%); 
             background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 15px; 
-            font-size: 0.8rem; font-weight: bold; color: #444; white-space: nowrap; z-index: 20;
+            font-size: 0.75rem; font-weight: bold; color: #444; white-space: nowrap; z-index: 20;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* --- ELEMENT GRAFIS --- */
-        /* Tambang (Kiri) */
+        /* GRAFIS TAMBANG (Kiri) */
         .pit-bg { position: absolute; bottom: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, #795548, #795548 10px, #6d4c41 10px, #6d4c41 20px); clip-path: polygon(0 0, 100% 0, 100% 100%, 80% 80%, 20% 80%, 0 100%); opacity: 0.8; }
-        .truck { position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 5; transition: bottom 0.3s; }
+        /* Scope Factor 1.0 logic: Truck stops only on flood */
+        .truck { position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%); font-size: 2.8rem; z-index: 5; transition: bottom 0.3s; }
+        /* Animasi Truk Bergerak (Getar) */
+        @keyframes rumble { 0% { transform: translateX(-50%) translateY(0px); } 50% { transform: translateX(-50%) translateY(-2px); } 100% { transform: translateX(-50%) translateY(0px); } }
+        .truck.moving { animation: rumble 0.5s infinite; }
+
         .water-pit { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, #2980b9, #3498db); opacity: 0.85; transition: height 0.5s; z-index: 6; border-top: 2px solid #aed6f1; }
 
-        /* Sungai (Kanan) */
+        /* GRAFIS SUNGAI (Kanan) */
         .river-bed { position: absolute; bottom: 0; width: 100%; height: 20%; background: #5d4037; z-index: 1; border-top: 2px solid #4e342e; }
         .water-river { position: absolute; bottom: 20%; width: 100%; background: linear-gradient(to top, #2980b9, #3498db); opacity: 0.8; transition: height 0.5s; z-index: 2; border-top: 2px solid #aed6f1; }
-        .barge { position: absolute; left: 50%; transform: translateX(-50%); font-size: 3.5rem; transition: bottom 0.5s, transform 0.5s; z-index: 5; }
+        .barge { position: absolute; left: 50%; transform: translateX(-50%); font-size: 3.2rem; transition: bottom 0.5s, transform 0.5s; z-index: 5; }
 
-        /* Hujan */
         .rain { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 8; }
         .drop { position: absolute; width: 2px; height: 10px; background: blue; animation: fall 0.4s linear infinite; }
         @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
 
-        /* --- KETERANGAN (Captions) --- */
-        /* Kita buat caption menyatu/compact di bawah gambar */
+        /* --- CAPTIONS --- */
         .caption-section {
             flex: 0 0 auto;
-            display: flex; gap: 10px; margin-bottom: 10px;
+            display: flex; gap: 8px; margin-bottom: 8px;
         }
         .caption-box {
             flex: 1; 
-            font-size: 0.75rem; line-height: 1.2; 
+            font-size: 0.7rem; line-height: 1.2; 
             padding: 8px; border-radius: 8px; background: #fff; border: 1px solid #ddd;
             display: flex; flex-direction: column; justify-content: center;
         }
-        .caption-title { font-weight: bold; margin-bottom: 3px; font-size: 0.8rem; }
+        .caption-title { font-weight: bold; margin-bottom: 2px; font-size: 0.75rem; }
         
-        /* Warna Caption Aktif (Visual Cue) */
         .caption-box.active-wet { border: 2px solid #3498db; background-color: #f0f8ff; }
         .caption-box.active-dry { border: 2px solid #e74c3c; background-color: #fff5f5; }
 
-        /* --- KONTROL (Fixed Height) --- */
+        /* --- KONTROL --- */
         .control-panel { 
             flex: 0 0 auto; 
-            background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #e9ecef; text-align: center; 
+            background: #f8f9fa; padding: 12px; border-radius: 12px; border: 1px solid #e9ecef; text-align: center; 
         }
         
-        /* Slider Styling */
-        input[type=range] { width: 100%; margin: 10px 0; cursor: pointer; height: 6px; background: #ccc; border-radius: 5px; outline: none; -webkit-appearance: none; }
+        input[type=range] { width: 100%; margin: 8px 0; cursor: pointer; height: 6px; background: #ccc; border-radius: 5px; outline: none; -webkit-appearance: none; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: #2c3e50; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
         .status-box { 
-            padding: 10px; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 5px; 
-            font-size: 0.95rem; transition: background 0.3s;
+            padding: 8px; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 4px; 
+            font-size: 0.9rem; transition: background 0.3s;
         }
         .status-normal { background: #27ae60; }
         .status-dry { background: #c0392b; }
@@ -117,26 +115,17 @@
         .status-warn-wet { background: #e67e22; }
         .status-warn-dry { background: #f39c12; }
 
-        #financialImpact { font-size: 0.9rem; font-weight: 600; color: #444; margin: 0; }
+        #financialImpact { font-size: 0.85rem; font-weight: 600; color: #444; margin: 0; }
 
-        /* --- RESPONSIVE MOBILE TWEAKS --- */
+        /* Mobile Adjustments */
         @media (max-width: 600px) {
-            .dashboard { padding: 10px; border-radius: 0; max-height: 100vh; }
+            .dashboard { padding: 10px; border-radius: 0; }
             h2 { font-size: 1.1rem; }
-            .subtitle { font-size: 0.75rem; display: none; /* Hide subtitle on tiny screens to save space */ }
-            
-            /* Gambar tetap side-by-side tapi ikon dikecilkan */
             .truck { font-size: 2rem; }
-            .barge { font-size: 2.5rem; }
-            
-            /* Sembunyikan teks caption panjang di HP, ganti indikator simpel */
+            .barge { font-size: 2.2rem; }
             .caption-text { display: none; } 
             .caption-title { font-size: 0.7rem; text-align: center; margin: 0; }
-            .caption-box { padding: 5px; text-align: center; }
-            
-            /* Kontrol lebih padat */
-            .control-panel { padding: 10px; }
-            .status-box { font-size: 0.85rem; padding: 8px; }
+            .caption-box { padding: 6px; }
         }
     </style>
 </head>
@@ -150,20 +139,20 @@
                 Supported by <a href="https://greenproductivity.online" class="credits-link">greenproductivity.online</a>
             </div>
             <h2>PTBA Climate Risk Stress Test</h2>
-            <p class="subtitle">Geser slider untuk melihat dampak "U-Shape" (Kering vs Basah)</p>
+            <p class="subtitle">Geser slider untuk simulasi dampak finansial (Data: Stress Test 2024)</p>
         </div>
 
         <div class="risk-container">
             <div class="zone" id="zone-mine">
-                <div class="label">AREA TAMBANG</div>
+                <div class="label">AREA TAMBANG (Scope: 100%)</div>
                 <div class="pit-bg"></div>
-                <div class="truck">🚛</div>
+                <div class="truck moving" id="truckIcon">🚛</div>
                 <div class="water-pit" id="pitWater" style="height: 0%;"></div>
                 <div class="rain" id="rainEffect"></div>
             </div>
 
             <div class="zone" id="zone-river">
-                <div class="label">LOGISTIK SUNGAI</div>
+                <div class="label">LOGISTIK SUNGAI (Scope: 25%)</div>
                 <div class="water-river" id="riverWater" style="height: 50%;"></div>
                 <div class="river-bed"></div>
                 <div class="barge" id="bargeShip" style="bottom: 60%;">🚢</div> 
@@ -173,16 +162,16 @@
         <div class="caption-section">
             <div class="caption-box" id="cap-wet">
                 <div class="caption-title">🌧️ RISIKO BASAH</div>
-                <div class="caption-text">Banjir Tambang (Pit Flooding) & Jalan Licin. Produksi terhenti.</div>
+                <div class="caption-text">Banjir Tambang (Pit Flooding). Produksi stop total.</div>
             </div>
             <div class="caption-box" id="cap-dry">
                 <div class="caption-title">☀️ RISIKO KERING</div>
-                <div class="caption-text">Sungai Surut (Grounding). Logistik tongkang terhambat/stop.</div>
+                <div class="caption-text">Sungai Surut (Grounding). Logistik stop.</div>
             </div>
         </div>
 
         <div class="control-panel">
-            <div style="display:flex; justify-content:space-between; font-size:0.9rem; font-weight:bold; margin-bottom:5px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; margin-bottom:2px;">
                 <span>Kering (0.1)</span>
                 <span style="color:#2980b9;">Inflow Ratio: <span id="ratioVal">1.0</span></span>
                 <span>Basah (2.5)</span>
@@ -203,6 +192,7 @@
         const pitWater = document.getElementById('pitWater');
         const riverWater = document.getElementById('riverWater');
         const barge = document.getElementById('bargeShip');
+        const truck = document.getElementById('truckIcon');
         const statusBox = document.getElementById('statusBox');
         const financeText = document.getElementById('financialImpact');
         const rainEffect = document.getElementById('rainEffect');
@@ -225,16 +215,18 @@
             
             riverWater.style.height = riverH + "%";
 
-            let waterSurface = 20 + riverH; // 20% is bed height
+            let waterSurface = 20 + riverH; 
             let bargeDraft = 12; 
             let idealBottom = waterSurface - bargeDraft;
-            let actualBottom = Math.max(20, idealBottom); // Grounding check
+            let actualBottom = Math.max(20, idealBottom); 
             barge.style.bottom = actualBottom + "%";
 
             // --- LOGIKA TAMBANG (KIRI) ---
             let pitH = 0;
+            // Di Excel: Very Wet starts around 1.8. Extreme Wet > 2.3
+            // Kita visualisasikan banjir mulai naik di > 1.4
             if(ratio > 1.4) {
-                pitH = (ratio - 1.4) * 75; 
+                pitH = (ratio - 1.4) * 80; 
                 rainEffect.style.display = 'block';
                 createRain();
             } else {
@@ -243,47 +235,60 @@
             }
             pitWater.style.height = Math.min(100, pitH) + "%";
 
-            // --- UPDATE STATUS & CAPTION HIGHLIGHT ---
+            // --- UPDATE STATUS & FINANCIALS ---
             updateStatus(ratio, actualBottom);
         }
 
         function updateStatus(ratio, bargePos) {
             // Reset Styles
             barge.style.transform = "translateX(-50%) rotate(0deg)";
-            capWet.className = "caption-box"; // Reset highlight
+            truck.classList.add('moving'); // Default truck bergerak
+            capWet.className = "caption-box"; 
             capDry.className = "caption-box";
 
+            // --- SKENARIO KERING (Excel: Dry Acute < 0.45, Loss 12.5% Net) ---
             if (ratio <= 0.4) {
-                // KERING
                 statusBox.className = "status-box status-dry";
-                statusBox.innerText = "BAHAYA: EKSTREM KERING";
-                financeText.innerHTML = "Loss: <strong>IDR 416 Miliar</strong> (Logistik Stop)";
+                statusBox.innerText = "BAHAYA: KERING AKUT (Logistik Stop)";
+                // Kalkulasi Excel: 3333 M * 12.5% = 416.6 Miliar
+                financeText.innerHTML = "Loss: <strong>IDR 417 Miliar</strong> (Tongkang Kandas)";
+                
+                // Visual Effect: Tongkang miring, tapi TRUK TETAP GERAK (Scope Factor 0.25)
                 if (bargePos <= 20.5) barge.style.transform = "translateX(-50%) rotate(-5deg)";
                 capDry.classList.add("active-dry");
             } 
-            else if (ratio >= 2.1) {
-                // BASAH PARAH
+            
+            // --- SKENARIO BASAH EKSTREM (Excel: Extreme Wet > 2.3, Loss 50% Net) ---
+            else if (ratio >= 2.3) {
                 statusBox.className = "status-box status-wet";
-                statusBox.innerText = "BAHAYA: BANJIR TAMBANG";
-                financeText.innerHTML = "Loss: <strong>IDR 1.66 Triliun</strong> (Produksi Stop)";
+                statusBox.innerText = "BAHAYA: BANJIR EKSTREM";
+                // Kalkulasi Excel: 3333 M * 50% = 1.666 Miliar
+                financeText.innerHTML = "Loss: <strong>IDR 1,67 Triliun</strong> (Tambang Lumpuh)";
+                
+                // Visual Effect: Truk berhenti karena banjir (Scope Factor 1.0)
+                truck.classList.remove('moving');
                 capWet.classList.add("active-wet");
             }
-            else if (ratio >= 1.5) {
-                // WASPADA BASAH
+
+            // --- SKENARIO SANGAT BASAH (Excel: Very Wet ~1.8, Loss 20% Net) ---
+            else if (ratio >= 1.8) {
                 statusBox.className = "status-box status-warn-wet"; 
                 statusBox.innerText = "WASPADA: SANGAT BASAH";
-                financeText.innerHTML = "Loss: <strong>IDR 666 Miliar</strong> (Jalan Licin)";
+                // Kalkulasi Excel: 3333 M * 20% = 666.6 Miliar
+                financeText.innerHTML = "Loss: <strong>IDR 667 Miliar</strong> (Jalan Licin)";
                 capWet.classList.add("active-wet");
             }
+
+            // --- SKENARIO PERINGATAN KERING (Excel: Inflow < 0.8) ---
             else if (ratio < 0.8) {
-                 // WASPADA KERING
                  statusBox.className = "status-box status-warn-dry"; 
                  statusBox.innerText = "WASPADA: SUNGAI SURUT";
                  financeText.innerHTML = "Loss: <strong>IDR 100-200 M</strong> (Light Loading)";
                  capDry.classList.add("active-dry");
             }
+            
+            // --- NORMAL ---
             else {
-                // NORMAL
                 statusBox.className = "status-box status-normal";
                 statusBox.innerText = "NORMAL: OPERASI OPTIMAL";
                 financeText.innerHTML = "Loss: <strong>IDR 0</strong>";
